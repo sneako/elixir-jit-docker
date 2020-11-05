@@ -1,9 +1,8 @@
-# npiderman/elixir-jit
-
 FROM ubuntu:focal-20200703 AS build
 
-ENV ERLANG_REV 4a42e03c796ee23c6f8ce479722653ad82c10a8e
-ENV ELIXIR_TAG v1.11.1
+#ENV ERLANG_REV 4a42e03c796ee23c6f8ce479722653ad82c10a8e
+ENV ERLANG_BRANCH inet-improvements
+ENV ELIXIR_TAG v1.11.2
 
 RUN apt-get update -&& \
   apt-get -y --no-install-recommends install \
@@ -25,11 +24,11 @@ RUN apt-get update -&& \
 
 
 RUN mkdir /OTP
-RUN git clone -b master --single-branch https://github.com/erlang/otp /OTP 
+RUN git clone -b $ERLANG_BRANCH --single-branch https://github.com/sneako/otp /OTP
 
 WORKDIR /OTP
 
-RUN git checkout $ERLANG_REV
+RUN git checkout $ERLANG_BRANCH
 RUN ./otp_build autoconf
 
 RUN ./otp_build autoconf
