@@ -37,10 +37,6 @@ WORKDIR /OTP
 RUN git checkout $ERLANG_REV -b prod
 # https://github.com/erlang/otp/pull/2891
 RUN git cherry-pick 76a2300189193c73e2e09f6aa39218ea5eac762c
-# https://github.com/erlang/otp/pull/3041
-RUN git remote add jv https://github.com/josevalim/otp.git
-RUN git fetch jv jv-descentralize-inet-lookups-2
-RUN git cherry-pick b972eb723cb850983f27695930ac5dbc6093a2c7
 
 RUN ./otp_build autoconf
 RUN ./configure --with-ssl --enable-dirty-schedulers
