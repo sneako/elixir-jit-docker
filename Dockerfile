@@ -1,9 +1,9 @@
 # npiderman/elixir-jit
 
-FROM ubuntu:focal-20200703 AS build
+FROM ubuntu:focal-20210119 AS build
 
-ENV ERLANG_REV 4a42e03c796ee23c6f8ce479722653ad82c10a8e
-ENV ELIXIR_TAG v1.11.1
+ENV ERLANG_TAG OTP-24.0-rc1
+ENV ELIXIR_TAG v1.11.3
 
 RUN apt-get update -&& \
   apt-get -y --no-install-recommends install \
@@ -29,7 +29,7 @@ RUN git clone -b master --single-branch https://github.com/erlang/otp /OTP
 
 WORKDIR /OTP
 
-RUN git checkout $ERLANG_REV
+RUN git checkout $ERLANG_TAG
 RUN ./otp_build autoconf
 
 RUN ./otp_build autoconf
@@ -48,9 +48,10 @@ ENV LANG=C.UTF-8
 RUN git clone --depth 1 --branch $ELIXIR_TAG https://github.com/elixir-lang/elixir.git /elixir
 WORKDIR /elixir
 RUN git checkout 
-RUN make clean test install
+#RUN make clean test install
+RUN make clean install
 
-FROM ubuntu:focal-20200703 AS final
+FROM ubuntu:focal-20210119 AS final
 
 RUN apt-get update && \
   apt-get -y --no-install-recommends install \
