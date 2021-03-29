@@ -3,7 +3,7 @@
 FROM ubuntu:focal-20210119 AS build
 
 ENV ERLANG_TAG OTP-24.0-rc1
-ENV ELIXIR_TAG v1.11.3
+ENV ELIXIR_TAG v1.11.4
 
 RUN apt-get update -&& \
   apt-get -y --no-install-recommends install \
@@ -28,8 +28,14 @@ RUN mkdir /OTP
 RUN git clone -b master --single-branch https://github.com/erlang/otp /OTP 
 
 WORKDIR /OTP
+# Otherwise the cherry picks complain...
+RUN git config --global user.email "you@example.co"
+RUN git config --global user.name "Your Name"
 
 RUN git checkout $ERLANG_TAG
+RUN git remote add jv https://github.com/josevalim/otp.git
+RUN git fetch jv jv-inet-db-race
+RUN git cherry-pick 8a20c5527d3927e2c7ddf4056818759480e0df4b
 RUN ./otp_build autoconf
 
 RUN ./otp_build autoconf
@@ -48,8 +54,7 @@ ENV LANG=C.UTF-8
 RUN git clone --depth 1 --branch $ELIXIR_TAG https://github.com/elixir-lang/elixir.git /elixir
 WORKDIR /elixir
 RUN git checkout 
-#RUN make clean test install
-RUN make clean install
+RUN make clean test install
 
 FROM ubuntu:focal-20210119 AS final
 
